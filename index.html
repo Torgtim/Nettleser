@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min Startside - Pro</title>
+    <title>Min Startside - Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
         :root {
             --text-color: #ffffff;
-            --panel-bg: rgba(255, 255, 255, 0.12);
+            --panel-bg: rgba(255, 255, 255, 0.15); /* Glass-effekt */
             --blur: blur(15px);
             --accent: #4285f4;
         }
@@ -28,47 +28,81 @@
             transition: background 0.5s ease-in-out;
         }
 
-        /* Overskrift og Klokke */
+        /* Header & Klokke */
         .header { text-align: center; margin-top: 5vh; margin-bottom: 20px; }
         #clock { font-size: 5.5rem; font-weight: 600; text-shadow: 0 5px 20px rgba(0,0,0,0.4); margin: 0; }
         #greeting { font-size: 1.5rem; font-weight: 300; opacity: 0.9; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
-        /* DEN HACKEDE SØKEBAREN */
+        /* --- GOOGLE CSE OVERSTYRING (Gjør den pen!) --- */
         .search-container {
-            width: 90%; max-width: 650px;
-            margin-bottom: 50px;
+            width: 90%; max-width: 700px;
+            margin-bottom: 40px;
             position: relative;
+            z-index: 10;
         }
 
-        .custom-search-bar {
-            display: flex;
-            align-items: center;
-            background: var(--panel-bg);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border-radius: 30px;
-            padding: 12px 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Fjerner Googles stygge rammer og bakgrunner */
+        .gsc-control-cse {
+            padding: 0 !important;
+            border: none !important;
+            background-color: transparent !important;
         }
-
-        .custom-search-bar:focus-within {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.02);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .custom-search-bar form { display: flex; width: 100%; align-items: center; }
         
-        .custom-search-bar input {
-            flex: 1; border: none; outline: none; background: transparent;
-            color: white; font-size: 1.1rem; padding-left: 15px;
+        /* Selve søkefeltet styling */
+        .gsc-input-box {
+            background: var(--panel-bg) !important;
+            backdrop-filter: var(--blur);
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 30px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            height: 50px !important;
+            padding: 5px 15px !important;
         }
-        .custom-search-bar input::placeholder { color: rgba(255,255,255,0.6); }
-        .custom-search-bar i { color: var(--accent); font-size: 1.2rem; }
 
-        /* SNARVEIER - GRID */
+        /* Teksten du skriver */
+        input.gsc-input {
+            color: white !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 16px !important;
+            background: transparent !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        /* Placeholder tekst farge */
+        input.gsc-input::placeholder { color: rgba(255,255,255,0.7); }
+
+        /* Søkeknappen */
+        button.gsc-search-button {
+            background-color: transparent !important;
+            border: none !important;
+            outline: none !important;
+        }
+        /* Bytter ut Googles stygge ikon med et gjennomsiktig et, eller justerer det */
+        button.gsc-search-button svg {
+            fill: white !important;
+            width: 24px; height: 24px;
+        }
+
+        /* RESULTATENE */
+        .gsc-results-wrapper-overlay, .gsc-results-wrapper-visible {
+            background: rgba(30, 30, 30, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+            border-radius: 20px;
+            padding: 20px !important;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5) !important;
+            color: white !important;
+        }
+        
+        /* Linker i resultatene */
+        .gs-title, .gs-title b { color: #8ab4f8 !important; text-decoration: none !important; }
+        .gs-snippet { color: #e0e0e0 !important; }
+        .gsc-url-top { color: #aaa !important; }
+        
+        /* Fjerner reklame-aktig branding */
+        .gcsc-branding { display: none !important; }
+
+
+        /* --- SNARVEIER --- */
         #shortcut-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -95,24 +129,20 @@
         }
         .shortcut span { font-size: 0.85rem; font-weight: 400; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-        /* INNSTILLINGER */
-        .settings-btn { position: fixed; top: 25px; right: 25px; cursor: pointer; font-size: 1.6rem; z-index: 100; color: white; opacity: 0.7; transition: 0.3s; }
-        .settings-btn:hover { opacity: 1; transform: rotate(45deg); }
-
+        /* INNSTILLINGER PANEL */
+        .settings-btn { position: fixed; top: 25px; right: 25px; cursor: pointer; font-size: 1.6rem; z-index: 100; color: white; opacity: 0.7; }
+        
         .side-panel {
             position: fixed; top: 0; right: -320px; width: 280px; height: 100%;
             background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(20px);
-            color: white; padding: 30px; transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5); z-index: 99;
+            color: white; padding: 30px; transition: 0.4s; z-index: 99;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
         }
         .side-panel.open { right: 0; }
 
-        .btn { 
-            width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; 
-            border: none; cursor: pointer; background: var(--accent); color: white; font-weight: 600; 
-        }
+        .btn { width: 100%; padding: 12px; margin-top: 15px; border-radius: 10px; border: none; cursor: pointer; background: var(--accent); color: white; font-weight: 600; }
 
-        /* SLETTEMODUS */
+        /* Slett-modus */
         .delete-mode .icon-box { border: 2px solid #ff4757; animation: shake 0.5s infinite; }
         @keyframes shake { 0%, 100% {transform: rotate(1deg)} 50% {transform: rotate(-1deg)} }
         .delete-x {
@@ -121,6 +151,7 @@
             display: none; border: none; cursor: pointer; z-index: 10;
         }
         .delete-mode .delete-x { display: block; }
+
     </style>
 </head>
 <body id="mainBody">
@@ -128,15 +159,15 @@
     <div class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></div>
 
     <div class="side-panel" id="sidePanel">
-        <h3>Dashboard Setup</h3>
-        <button class="btn" onclick="document.getElementById('bgInput').click()">Velg Bakgrunn</button>
+        <h3>Innstillinger</h3>
+        <button class="btn" onclick="document.getElementById('bgInput').click()">Endre Bakgrunn</button>
         <input type="file" id="bgInput" hidden onchange="changeBg(event)">
         
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
         
-        <h4>Legg til snarvei</h4>
+        <h4>Ny snarvei</h4>
         <input type="text" id="nameInp" placeholder="Navn" style="width:90%; padding:10px; margin-bottom:10px; border-radius:5px; border:none;">
-        <input type="text" id="urlInp" placeholder="https://..." style="width:90%; padding:10px; margin-bottom:10px; border-radius:5px; border:none;">
+        <input type="text" id="urlInp" placeholder="URL (https://...)" style="width:90%; padding:10px; margin-bottom:10px; border-radius:5px; border:none;">
         <button class="btn" onclick="addShortcut()">Legg til</button>
         
         <button class="btn" style="background:#f39c12" onclick="document.getElementById('shortcut-grid').classList.toggle('delete-mode')">Slett snarveier</button>
@@ -145,16 +176,12 @@
 
     <div class="header">
         <div id="clock">00:00</div>
-        <div id="greeting">God dag</div>
+        <div id="greeting">Hei!</div>
     </div>
 
     <div class="search-container">
-        <div class="custom-search-bar">
-            <form action="https://www.google.com/search" method="GET" target="_self">
-                <i class="fas fa-search"></i>
-                <input type="text" name="q" placeholder="Søk på hele nettet..." autocomplete="off" required>
-            </form>
-        </div>
+        <script async src="https://cse.google.com/cse.js?cx=6480ee989fb7d4ce1"></script>
+        <div class="gcse-search"></div>
     </div>
 
     <div id="shortcut-grid"></div>
@@ -162,11 +189,9 @@
     <script>
         function toggleSettings() { document.getElementById('sidePanel').classList.toggle('open'); }
 
-        // Last lagrede snarveier eller bruk standard
         let shortcuts = JSON.parse(localStorage.getItem('savedShortcuts')) || [
             {name: 'YouTube', url: 'https://youtube.com', icon: 'fab fa-youtube'},
-            {name: 'NRK', url: 'https://nrk.no', icon: 'fas fa-newspaper'},
-            {name: 'Facebook', url: 'https://facebook.com', icon: 'fab fa-facebook-messenger'}
+            {name: 'NRK', url: 'https://nrk.no', icon: 'fas fa-newspaper'}
         ];
 
         function render() {
@@ -190,14 +215,7 @@
             let url = document.getElementById('urlInp').value;
             if(!name || !url) return;
             if(!url.startsWith('http')) url = 'https://' + url;
-            
-            // Prøv å gjette ikon basert på URL
-            let icon = 'fas fa-link';
-            if(url.includes('youtube')) icon = 'fab fa-youtube';
-            if(url.includes('facebook')) icon = 'fab fa-facebook';
-            if(url.includes('gmail')) icon = 'fas fa-envelope';
-            
-            shortcuts.push({name, url, icon});
+            shortcuts.push({name, url, icon: 'fas fa-link'});
             save();
             document.getElementById('nameInp').value = '';
             document.getElementById('urlInp').value = '';
@@ -218,22 +236,19 @@
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-            
             const h = now.getHours();
-            let g = "God natt";
-            if(h >= 5) g = "God morgen";
-            if(h >= 12) g = "God dag";
-            if(h >= 18) g = "God kveld";
+            let g = h < 12 ? "God morgen" : h < 18 ? "God dag" : "God kveld";
             document.getElementById('greeting').innerText = g;
         }
 
-        function resetAll() { if(confirm("Vil du slette alt og gå tilbake til standard?")) { localStorage.clear(); location.reload(); } }
+        function resetAll() { if(confirm("Nullstille alt?")) { localStorage.clear(); location.reload(); } }
 
-        // Sjekk lagrede instillinger ved oppstart
+        // Start-oppsett
         if(localStorage.getItem('userBg')) {
             document.body.style.backgroundImage = `url('${localStorage.getItem('userBg')}')`;
         } else {
-            document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1477346611705-65d1883cee1e?auto=format&fit=crop&w=1920&q=80')";
+            // Standard bakgrunn hvis du ikke har valgt en
+            document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1920&q=80')";
         }
 
         setInterval(updateClock, 1000);
