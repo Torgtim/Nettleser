@@ -3,270 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Søk & utforsk</title>
-    
+    <title>Min Startside</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* --- Fargetemaer (Variabler) --- */
         :root {
             --bg-color: #f0f2f5;
             --text-color: #2c3e50;
-            --search-bg: #ffffff;
-            --search-border: #dfe1e5;
-            --button-bg: #007bff;
-            --button-text: #ffffff;
             --panel-bg: rgba(255, 255, 255, 0.95);
-            --shortcut-bg: #ffffff;
+            --accent: #007bff;
         }
 
         .dark-mode {
             --bg-color: #121212;
             --text-color: #e0e0e0;
-            --search-bg: #2c2c2c;
-            --search-border: #444444;
-            --button-bg: #bb86fc;
-            --button-text: #121212;
             --panel-bg: rgba(30, 30, 30, 0.95);
-            --shortcut-bg: #1e1e1e;
+            --accent: #bb86fc;
         }
 
-        /* --- Generell Layout --- */
         body {
             margin: 0; padding: 20px;
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            background-size: cover; background-position: center; background-attachment: fixed;
             min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: background-color 0.4s ease, color 0.4s ease;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            transition: 0.4s;
         }
 
-        /* --- Den nye Klokken og Hilsenen (Det kule tillegget!) --- */
-        .greeting-container {
-            text-align: center; margin-bottom: 30px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-        }
-        #clock {
-            font-size: 5em; font-weight: 600; letter-spacing: -2px; line-height: 1;
-        }
-        #greeting {
-            font-size: 1.5em; font-weight: 300; margin-top: 10px; opacity: 0.9;
+        .greeting-container { text-align: center; margin-top: 50px; margin-bottom: 30px; }
+        #clock { font-size: 5em; font-weight: 600; }
+        #greeting { font-size: 1.5em; opacity: 0.8; }
+
+        /* SØKEBOKS RAMME - Denne tvinger frem plassen */
+        .search-area {
+            width: 100%;
+            max-width: 700px;
+            min-height: 100px; /* Sikrer at vi ser hvor boksen skal være */
+            background: var(--panel-bg);
+            padding: 10px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* --- Søkeboks-området --- */
-        .search-container {
-            width: 100%; max-width: 650px;
-            text-align: center;
-        }
-
-        /* --- Styling av Google Søket for å matche resten --- */
-        /* Fjerner standard Google-bakgrunn */
-        .gsc-control-cse, .gsc-search-box, .gsc-input, .gsc-results-wrapper-nooverlay {
-            background-color: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;
-        }
-        /* Selve søkefeltet */
-        input.gsc-input {
-            background-color: var(--search-bg) !important;
-            color: var(--text-color) !important;
-            border: 1px solid var(--search-border) !important;
-            border-radius: 50px !important;
-            padding: 12px 25px !important;
-            font-family: 'Poppins', sans-serif !important; font-size: 1.1em !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
-            transition: all 0.3s ease !important;
-        }
-        input.gsc-input:focus { box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important; border-color: var(--button-bg) !important; }
-        
-        /* Søkeknappen */
-        button.gsc-search-button-v2 {
-            background-color: var(--button-bg) !important;
-            border-radius: 50% !important; /* Rund knapp */
-            padding: 12px !important; margin-left: 10px !important; border: none !important;
-            cursor: pointer; transition: transform 0.2s ease;
-        }
-        button.gsc-search-button-v2:hover { transform: scale(1.1); }
-        button.gsc-search-button-v2 svg { fill: var(--button-text) !important; width: 20px; height: 20px; }
-
-        /* Resultatene */
-        .gcse-searchresults-only {
-            margin-top: 30px; background-color: var(--search-bg); padding: 25px;
-            border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        .gs-title a { color: var(--button-bg) !important; text-decoration: none !important; font-weight: 600 !important; }
-        .gs-snippet { color: var(--text-color) !important; }
-
-        /* --- Innstillingsknapp og Panel (Høyre side) --- */
+        /* Innstillinger-knapp */
         .settings-btn {
-            position: fixed; top: 25px; right: 25px;
-            background-color: var(--panel-bg); color: var(--text-color);
-            width: 50px; height: 50px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5em; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1001; transition: transform 0.3s ease;
-        }
-        .settings-btn:hover { transform: rotate(45deg); }
-
-        .settings-panel {
-            position: fixed; top: 0; right: -350px; width: 320px; height: 100%;
-            background-color: var(--panel-bg); backdrop-filter: blur(10px);
-            padding: 30px; box-shadow: -5px 0 20px rgba(0,0,0,0.2);
-            transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 1000;
-            overflow-y: auto; box-sizing: border-box;
-        }
-        .settings-panel.open { right: 0; }
-        .settings-panel h2 { margin-top: 60px; border-bottom: 1px solid var(--search-border); padding-bottom: 10px; }
-        
-        .option { margin: 20px 0; display: flex; align-items: center; justify-content: space-between; }
-        .btn-action {
-            background-color: var(--button-bg); color: var(--button-text);
-            border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.9em;
+            position: fixed; top: 20px; right: 20px;
+            font-size: 1.5em; cursor: pointer; z-index: 100;
         }
 
-        /* --- Hurtiglenker --- */
-        .shortcuts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 15px; margin-top: 20px; }
-        .shortcut-item {
-            background-color: var(--shortcut-bg); padding: 15px; border-radius: 15px;
-            text-align: center; text-decoration: none; color: var(--text-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; position: relative;
-        }
-        .shortcut-item:hover { transform: translateY(-3px); }
-        .shortcut-item i { display: block; font-size: 24px; margin-bottom: 8px; color: var(--button-bg); }
-        .delete-link {
-            position: absolute; top: -5px; right: -5px; background: #ff4757; color: white;
-            width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; cursor: pointer; border: none;
-        }
-
-        /* Mobil-tilpasning */
-        @media (max-width: 480px) {
-            #clock { font-size: 3.5em; }
-            .settings-panel { width: 100%; right: -100%; }
-            .search-container { width: 100%; }
-        }
+        /* Skjul Google sin kjedelige merking */
+        .gsc-branding { display: none !important; }
     </style>
 </head>
 <body id="body">
 
+    <div class="settings-btn" onclick="document.getElementById('sidePanel').classList.toggle('open')">
+        <i class="fas fa-cog"></i>
+    </div>
+
     <div class="greeting-container">
-        <div id="clock">Lasting...</div>
-        <div id="greeting">Hei!</div>
+        <div id="clock">00:00</div>
+        <div id="greeting">Laster...</div>
     </div>
 
-    <div class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></div>
-
-    <div class="settings-panel" id="settingsPanel">
-        <h2>Utseende</h2>
-        <div class="option">
-            <span><i class="fas fa-moon"></i> Dark Mode</span>
-            <input type="checkbox" id="darkModeToggle" onchange="toggleDark()">
-        </div>
-        <div class="option">
-             <span><i class="fas fa-image"></i> Bakgrunn</span>
-             <input type="file" id="bg-upload" hidden accept="image/*" onchange="uploadBg(event)">
-             <button class="btn-action" onclick="document.getElementById('bg-upload').click()">Velg bilde</button>
-        </div>
-        <button class="btn-action" onclick="clearBg()" style="background:#ff4757; width:100%; margin-top:5px;">Fjern bakgrunn</button>
-
-        <h2>Hurtiglenker</h2>
-        <div class="shortcuts-grid" id="shortcut-list">
-            </div>
-        <button class="btn-action" onclick="addLink()" style="width:100%; margin-top:20px; background:#2ecc71;">
-            <i class="fas fa-plus"></i> Legg til ny lenke
-        </button>
-    </div>
-
-    <div class="search-container">
+    <div class="search-area">
         <script async src="https://cse.google.com/cse.js?cx=6480ee989fb7d4ce1"></script>
         <div class="gcse-search"></div>
     </div>
 
     <script>
-        // --- JavaScript for funksjonalitet ---
-
-        // 1. Klokke og Hilsen
         function updateClock() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}`;
-
-            const greetingEl = document.getElementById('greeting');
-            const hour = now.getHours();
-            if (hour >= 5 && hour < 12) greetingEl.innerText = "God morgen!";
-            else if (hour >= 12 && hour < 18) greetingEl.innerText = "God dag!";
-            else greetingEl.innerText = "God kveld!";
+            document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            const h = now.getHours();
+            let g = "Hei!";
+            if(h < 12) g = "God morgen";
+            else if(h < 18) g = "God dag";
+            else g = "God kveld";
+            document.getElementById('greeting').innerText = g;
         }
         setInterval(updateClock, 1000);
         updateClock();
-
-        // 2. Innstillinger og Lagring (Local Storage)
-        const body = document.getElementById('body');
-        const panel = document.getElementById('settingsPanel');
-        
-        function toggleSettings() { panel.classList.toggle('open'); }
-
-        // Hent lagrede innstillinger ved start
-        if(localStorage.getItem('dark') === 'true') {
-            body.classList.add('dark-mode');
-            document.getElementById('darkModeToggle').checked = true;
-        }
-        if(localStorage.getItem('bg')) body.style.backgroundImage = `url('${localStorage.getItem('bg')}')`;
-        loadShortcuts();
-
-        // Funksjoner for Dark Mode og Bakgrunn
-        function toggleDark() {
-            const isDark = body.classList.toggle('dark-mode');
-            localStorage.setItem('dark', isDark);
-        }
-        function uploadBg(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                body.style.backgroundImage = `url('${reader.result}')`;
-                localStorage.setItem('bg', reader.result);
-            }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        }
-        function clearBg() {
-            body.style.backgroundImage = '';
-            localStorage.removeItem('bg');
-        }
-
-        // 3. Hurtiglenker
-        function loadShortcuts() {
-            const list = document.getElementById('shortcut-list');
-            list.innerHTML = '';
-            const links = JSON.parse(localStorage.getItem('links')) || [];
-            links.forEach((link, index) => {
-                list.innerHTML += `
-                <div class="shortcut-item">
-                    <button class="delete-link" onclick="removeLink(${index})">X</button>
-                    <a href="${link.url}">
-                        <i class="fas fa-external-link-alt"></i>
-                        <span>${link.name}</span>
-                    </a>
-                </div>`;
-            });
-        }
-        function addLink() {
-            const name = prompt("Navn på nettsiden (f.eks. 'YouTube')");
-            let url = prompt("Adressen (f.eks. 'youtube.com')");
-            if(!name || !url) return;
-            if(!url.startsWith('http')) url = 'https://' + url;
-            const links = JSON.parse(localStorage.getItem('links')) || [];
-            links.push({name, url});
-            localStorage.setItem('links', JSON.stringify(links));
-            loadShortcuts();
-        }
-        function removeLink(index) {
-            const links = JSON.parse(localStorage.getItem('links')) || [];
-            links.splice(index, 1);
-            localStorage.setItem('links', JSON.stringify(links));
-            loadShortcuts();
-        }
     </script>
 </body>
 </html>
