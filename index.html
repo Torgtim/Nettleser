@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Google</title>
+    <style>
+        :root { --bg-color: #ffffff; --text-color: #202124; --box-bg: #f8f9fa; }
+        .dark-mode { --bg-color: #202124; --text-color: #ffffff; --box-bg: #3c4043; }
+
+        body { 
+            margin: 0; background-color: var(--bg-color); color: var(--text-color);
+            background-size: cover; background-position: center; transition: 0.3s;
+            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-container { width: 90%; max-width: 600px; text-align: center; }
+        input[type="text"] {
+            width: 100%; padding: 15px 25px; border-radius: 30px;
+            border: 1px solid #dfe1e5; font-size: 18px; outline: none;
+            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+        }
+
+        .controls { position: absolute; top: 10px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        button, label { 
+            padding: 8px 15px; background: rgba(0,0,0,0.5); border: none; 
+            border-radius: 20px; cursor: pointer; color: white; font-size: 12px;
+        }
+
+        .shortcuts { margin-top: 30px; display: flex; gap: 20px; }
+        .shortcut { 
+            background: var(--box-bg); padding: 15px; border-radius: 15px; 
+            text-decoration: none; color: var(--text-color); font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body id="body">
+
+    <div class="controls">
+        <button onclick="toggleDark()">🌓 Dark Mode</button>
+        <label for="bg-upload">🖼️ Bakgrunn</label>
+        <input type="file" id="bg-upload" hidden accept="image/*" onchange="uploadBg(event)">
+        <button onclick="addLink()">➕ Legg til lenke</button>
+    </div>
+
+    <div class="search-container">
+        <h1>Søk</h1>
+        <form action="https://www.google.com/search" method="get">
+            <input type="text" name="q" placeholder="Hva leter du etter?" autofocus>
+        </form>
+
+        <div class="shortcuts" id="shortcut-list">
+            </div>
+    </div>
+
+    <script>
+        // Sjekk om mørk modus var på sist
+        if(localStorage.getItem('dark') === 'true') document.body.classList.add('dark-mode');
+        
+        function toggleDark() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('dark', isDark);
+        }
+
+        function uploadBg(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.body.style.backgroundImage = `url('${reader.result}')`;
+                localStorage.setItem('bg', reader.result);
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Hent lagret bakgrunn
+        if(localStorage.getItem('bg')) document.body.style.backgroundImage = `url('${localStorage.getItem('bg')}')`;
+
+        function addLink() {
+            const navn = prompt("Navn på nettside:");
+            const url = prompt("URL (f.eks https://youtube.com):");
+            if(navn && url) {
+                const linkHtml = `<a href="${url}" class="shortcut">${navn}</a>`;
+                document.getElementById('shortcut-list').innerHTML += linkHtml;
+            }
+        }
+    </script>
+</body>
+</html>
